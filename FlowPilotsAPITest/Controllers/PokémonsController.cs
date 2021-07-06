@@ -18,7 +18,7 @@ namespace FlowPilotsAPITest.Api.Controllers
     public class PokémonsController : ControllerBase
     {
 
-        private IPokémonDataManager _dataManager;
+        private readonly IPokémonDataManager _dataManager;
         public PokémonsController(IPokémonDataManager dataManager)
         {
             _dataManager = dataManager;

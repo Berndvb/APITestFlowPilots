@@ -9,7 +9,7 @@ namespace APITest.Services
 {
     public class PokémonDataManager : IPokémonDataManager
     {
-        private IPokémonRepo _repository;
+        private readonly IPokémonRepo _repository;
         public PokémonDataManager(IPokémonRepo repo) // ontvangen van repo en vragen aan service wat er moet gebeuren (1à2 lijnen max per functie)
         {
             _repository = repo;
@@ -19,7 +19,7 @@ namespace APITest.Services
         {
             var respons = await _repository.GetAllPokémonAsync();
 
-            List<Pokémon> allPokémon = new List<Pokémon>();
+            var allPokémon = new List<Pokémon>();
 
             if (respons.StatusCode == System.Net.HttpStatusCode.OK)
             {

@@ -11,7 +11,6 @@ namespace APITest.Data
 {
     public class PokémonRepo : IPokémonRepo
     {
-        //private readonly PokémonDbContext _ctx;
         const string APIURL = "https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json"; 
         internal RestClient _restClient = null;
 
@@ -19,11 +18,15 @@ namespace APITest.Data
         {
             _restClient = new RestClient(APIURL);
         }
-        public async Task<IRestResponse> GetAllPokémonAsync()
+        public async Task<IRestResponse> GetAllPokémonAsync() // ???
         {
             RestRequest request = new RestRequest(Method.GET);
             var respons = _restClient.Execute(request);
             return respons;
         }
+
+        //api <-> http
+        // database online + local
+        //Create post met enkel JSon, dus zonder context
     }
 }
