@@ -11,15 +11,17 @@ namespace APITest.Services
     public class PokémonDataManager : IPokémonDataManager
     {
         private readonly IPokémonRepo _repository;
+        private readonly ApplicationDbContext _dbContext;
         private List<Pokémon> _allPokémon; //cach: opslaan + validatie (-> lazy loading, koppelen aan method; dus enkel wanneer gevraagd)
-        public PokémonDataManager(IPokémonRepo repo) // ontvangen van repo en vragen aan service wat er moet gebeuren (1à2 lijnen max per functie)
+        public PokémonDataManager(IPokémonRepo repo, ApplicationDbContext dbContext) // ontvangen van repo en vragen aan service wat er moet gebeuren (1à2 lijnen max per functie)
         {
             _repository = repo;
+            _dbContext = dbContext;
         }
 
         public async Task<List<Pokémon>> GetAllPokémonAsync()
         {
-            if (_allPokémon == null)
+            if (_dbContext.Pokémons.Any() == false)
             {
                 var respons = await _repository.GetAllPokémonAsync();
 
@@ -42,6 +44,17 @@ namespace APITest.Services
             var allPokémon = await GetAllPokémonAsync();
             return allPokémon.FindAll(x => x.Type.ToString().Contains(type));
         }
+
+        public async void InsertIntoDB()
+        {
+            foreach (var pokémon in await GetAllPokémonAsync())
+            {
+                await _dbContext.AddAsync(pokémon);
+            }
+
+            await _dbContext.SaveChangesAsync();
+        }
+
 
         //________________________________________________________________________________________________________________________
 
