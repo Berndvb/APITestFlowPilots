@@ -3,6 +3,7 @@ using APITest.Domain;
 using Newtonsoft.Json;
 using RestSharp;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace APITest.Services
@@ -10,6 +11,7 @@ namespace APITest.Services
     public class PokémonDataManager : IPokémonDataManager
     {
         private readonly IPokémonRepo _repository;
+        private List<Pokémon> _allPokémon; //cach: opslaan + validatie (-> lazy loading, koppelen aan method; dus enkel wanneer gevraagd)
         public PokémonDataManager(IPokémonRepo repo) // ontvangen van repo en vragen aan service wat er moet gebeuren (1à2 lijnen max per functie)
         {
             _repository = repo;
@@ -17,52 +19,31 @@ namespace APITest.Services
 
         public async Task<List<Pokémon>> GetAllPokémonAsync()
         {
-            var respons = await _repository.GetAllPokémonAsync();
-
-            var allPokémon = new List<Pokémon>();
-
-            if (respons.StatusCode == System.Net.HttpStatusCode.OK)
+            if (_allPokémon == null)
             {
-                allPokémon = JsonConvert.DeserializeObject<List<Pokémon>>(respons.Content);
-                return allPokémon;
+                var respons = await _repository.GetAllPokémonAsync();
+
+                if (respons.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    _allPokémon = JsonConvert.DeserializeObject<List<Pokémon>>(respons.Content);
+                }
             }
-            else
-            {
-                return null;
-            }
+            return _allPokémon;
         }
 
         public async Task<Pokémon> GetPokémonByIdAsync(int id)
         {
-            var respons = await _repository.GetAllPokémonAsync();
-
-            Pokémon selection = new Pokémon();
-            if (respons.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                selection = JsonConvert.DeserializeObject<List<Pokémon>>(respons.Content).Find(x => x.Id.Equals(id));
-                return selection;
-            }
-            else
-            {
-                return null;
-            }
+            var allPokémon = await GetAllPokémonAsync();
+            return allPokémon.FirstOrDefault(x => x.Id.Equals(id));
         }
 
         public async Task<IEnumerable<Pokémon>> GetSpecificTypesAsync(string type)
         {
-            var respons = await _repository.GetAllPokémonAsync();
-
-            List<Pokémon> selection = new List<Pokémon>();
-            if (respons.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                selection = JsonConvert.DeserializeObject<List<Pokémon>>(respons.Content).FindAll(x => x.Type.Contains(type));
-                return selection;
-            }
-            else
-            {
-                return null;
-            }
+            var allPokémon = await GetAllPokémonAsync();
+            return allPokémon.FindAll(x => x.Type.ToString().Contains(type));
         }
+
+        //________________________________________________________________________________________________________________________
 
         public async Task<IEnumerable<Pokémon>> CreatePokédexAsync(List<Pokémon> pokédex) // !!
         {

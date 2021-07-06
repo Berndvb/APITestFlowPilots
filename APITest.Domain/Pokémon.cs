@@ -13,7 +13,7 @@ namespace APITest.Domain
         public Name Name { get; set; }
 
         [JsonProperty("type")]
-        public List<string> Type { get; set; }
+        public List<EPokémonType> Type { get; set; }
 
         [JsonProperty("base")]
         public BaseStats Stats { get; set; }
