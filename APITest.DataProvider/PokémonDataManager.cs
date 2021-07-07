@@ -1,7 +1,9 @@
 ﻿using APITest.Data;
 using APITest.Domain;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +14,7 @@ namespace APITest.Services
     {
         private readonly IPokémonRepo _repository;
         private readonly ApplicationDbContext _dbContext;
-        private List<Pokémon> _allPokémon; //cach: opslaan + validatie (-> lazy loading, koppelen aan method; dus enkel wanneer gevraagd)
+       /* private List<Pokémon> _allPokémon;*/ //cach: opslaan + validatie (-> lazy loading, koppelen aan method; dus enkel wanneer gevraagd)
         public PokémonDataManager(IPokémonRepo repo, ApplicationDbContext dbContext) // ontvangen van repo en vragen aan service wat er moet gebeuren (1à2 lijnen max per functie)
         {
             _repository = repo;
@@ -21,16 +23,43 @@ namespace APITest.Services
 
         public async Task<List<Pokémon>> GetAllPokémonAsync()
         {
+            var allPokémon = new List<Pokémon>();
             if (_dbContext.Pokémons.Any() == false)
             {
                 var respons = await _repository.GetAllPokémonAsync();
 
                 if (respons.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    _allPokémon = JsonConvert.DeserializeObject<List<Pokémon>>(respons.Content);
+                    var test = JsonConvert.DeserializeObject<List<DummyPokémon>>(respons.Content);
+                    foreach (var pokémon in test)
+                    {
+                        var newPokémon = new Pokémon();
+                        newPokémon.Name = pokémon.Name;
+                        newPokémon.Stats = pokémon.Stats;
+                        newPokémon.Type = new List<PokémonType>();
+
+                        foreach (var item in pokémon.Type)
+                        {
+                            if (Enum.TryParse(item, out EPokémonType myStatus))
+                            {
+                                newPokémon.Type.Add(new PokémonType() { Type = myStatus });
+                            }
+                            else
+                            {
+                                throw new Exception($"{item} String -> Enum converter");
+                            }
+                        }
+                        allPokémon.Add(newPokémon);
+                        await _dbContext.AddAsync(newPokémon);
+                        await _dbContext.SaveChangesAsync();
+                    }
                 }
             }
-            return _allPokémon;
+            else
+            {
+                allPokémon = await _dbContext.Pokémons.ToListAsync();
+            }
+            return allPokémon;
         }
 
         public async Task<Pokémon> GetPokémonByIdAsync(int id)

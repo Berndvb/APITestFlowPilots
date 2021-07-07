@@ -108,17 +108,27 @@ namespace APITest.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("PokémonId")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PokémonId");
-
                     b.ToTable("PokémonType");
+                });
+
+            modelBuilder.Entity("PokémonPokémonType", b =>
+                {
+                    b.Property<long>("PokémonsId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("TypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PokémonsId", "TypeId");
+
+                    b.HasIndex("TypeId");
+
+                    b.ToTable("PokémonPokémonType");
                 });
 
             modelBuilder.Entity("APITest.Domain.Pokémon", b =>
@@ -136,16 +146,19 @@ namespace APITest.Data.Migrations
                     b.Navigation("Stats");
                 });
 
-            modelBuilder.Entity("APITest.Domain.PokémonType", b =>
+            modelBuilder.Entity("PokémonPokémonType", b =>
                 {
                     b.HasOne("APITest.Domain.Pokémon", null)
-                        .WithMany("Type")
-                        .HasForeignKey("PokémonId");
-                });
+                        .WithMany()
+                        .HasForeignKey("PokémonsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("APITest.Domain.Pokémon", b =>
-                {
-                    b.Navigation("Type");
+                    b.HasOne("APITest.Domain.PokémonType", null)
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

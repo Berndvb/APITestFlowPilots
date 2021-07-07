@@ -1,12 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace APITest.Domain
 {
-    public class Pokémon
+    public class DummyPokémon
     {
         [JsonProperty("id")]
         public long Id { get; set; }
@@ -15,7 +14,7 @@ namespace APITest.Domain
         public Name Name { get; set; }
 
         [JsonProperty("type")]
-        public List<PokémonType> Type { get; set; }
+        public List<string> Type { get; set; }
 
         [JsonProperty("base")]
         public BaseStats Stats { get; set; }

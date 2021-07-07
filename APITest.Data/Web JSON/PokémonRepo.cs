@@ -25,9 +25,5 @@ namespace APITest.Data
             var respons = await _restClient.ExecuteAsync(request);
             return respons;
         }
-
-        //api <-> http
-        // database online + local
-        //Create post met enkel JSon, dus zonder context
     }
 }
