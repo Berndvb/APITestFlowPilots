@@ -67,15 +67,23 @@ namespace APITest.Services
         public async Task<Pokémon> GetPokémonByIdAsync(int id)
         {
             var allPokémon = await GetAllPokémonAsync();
-            var test = allPokémon;
-            var test2 = allPokémon.FirstOrDefault(x => x.Id.Equals(id));
             return allPokémon.FirstOrDefault(x => x.Id.Equals(id));
         }
 
-        public async Task<IEnumerable<Pokémon>> GetSpecificTypesAsync(string type)
+        public async Task<IEnumerable<Pokémon>> GetSpecificTypesAsync(string typeInput)
         {
-            var allPokémon = await GetAllPokémonAsync();
-            return allPokémon.FindAll(x => x.Type.ToString().Contains(type));
+            var selectedPokémon = new List<Pokémon>();
+            foreach (var pokémon in await GetAllPokémonAsync())
+            {
+                foreach (var type in pokémon.Type)
+                {
+                    if (type.Type.ToString().Equals(typeInput))
+                    {
+                        selectedPokémon.Add(pokémon);
+                    }
+                }
+            }
+            return selectedPokémon;
         }
 
         public async void InsertIntoDB()
