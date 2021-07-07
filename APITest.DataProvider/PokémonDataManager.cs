@@ -30,8 +30,8 @@ namespace APITest.Services
 
                 if (respons.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    var test = JsonConvert.DeserializeObject<List<DummyPokémon>>(respons.Content);
-                    foreach (var pokémon in test)
+                    var PokémonJson = JsonConvert.DeserializeObject<List<DummyPokémon>>(respons.Content);
+                    foreach (var pokémon in PokémonJson)
                     {
                         var newPokémon = new Pokémon
                         {
@@ -67,6 +67,8 @@ namespace APITest.Services
         public async Task<Pokémon> GetPokémonByIdAsync(int id)
         {
             var allPokémon = await GetAllPokémonAsync();
+            var test = allPokémon;
+            var test2 = allPokémon.FirstOrDefault(x => x.Id.Equals(id));
             return allPokémon.FirstOrDefault(x => x.Id.Equals(id));
         }
 

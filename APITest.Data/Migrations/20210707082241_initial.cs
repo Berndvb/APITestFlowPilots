@@ -2,7 +2,7 @@
 
 namespace APITest.Data.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -41,6 +41,19 @@ namespace APITest.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PokémonType",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Type = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PokémonType", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Pokémons",
                 columns: table => new
                 {
@@ -69,24 +82,33 @@ namespace APITest.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PokémonType",
+                name: "PokémonPokémonType",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    PokémonId = table.Column<long>(type: "bigint", nullable: true)
+                    PokémonsId = table.Column<long>(type: "bigint", nullable: false),
+                    TypeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PokémonType", x => x.Id);
+                    table.PrimaryKey("PK_PokémonPokémonType", x => new { x.PokémonsId, x.TypeId });
                     table.ForeignKey(
-                        name: "FK_PokémonType_Pokémons_PokémonId",
-                        column: x => x.PokémonId,
+                        name: "FK_PokémonPokémonType_Pokémons_PokémonsId",
+                        column: x => x.PokémonsId,
                         principalTable: "Pokémons",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PokémonPokémonType_PokémonType_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "PokémonType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PokémonPokémonType_TypeId",
+                table: "PokémonPokémonType",
+                column: "TypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pokémons_NameId",
@@ -97,20 +119,18 @@ namespace APITest.Data.Migrations
                 name: "IX_Pokémons_StatsId",
                 table: "Pokémons",
                 column: "StatsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PokémonType_PokémonId",
-                table: "PokémonType",
-                column: "PokémonId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PokémonType");
+                name: "PokémonPokémonType");
 
             migrationBuilder.DropTable(
                 name: "Pokémons");
+
+            migrationBuilder.DropTable(
+                name: "PokémonType");
 
             migrationBuilder.DropTable(
                 name: "AllBaseStats");
