@@ -11,7 +11,5 @@ namespace APITest.Services
         Task<List<Pokémon>> GetAllPokémonAsync();
         Task<Pokémon> GetPokémonByIdAsync(int id);
         Task<IEnumerable<Pokémon>> GetSpecificTypesAsync(string type);
-        Task<IEnumerable<Pokémon>> CreatePokédexAsync(List<Pokémon> pokédex);
-
     }
 }

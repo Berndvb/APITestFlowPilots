@@ -6,12 +6,8 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace Axa.Mobile.Api
+namespace APITest.Helpers
 {
-    /// <summary>
-    /// Tolerant Enum converter. Based on code in the StackOverflow post below, but adds EnumMember attribute support.
-    /// http://stackoverflow.com/questions/22752075/how-can-i-ignore-unknown-enum-values-during-json-deserialization
-    /// </summary>
     public class TolerantEnumConverter : JsonConverter
     {
         ConcurrentDictionary<Type, Dictionary<string, object>> _fromValueMap = new ConcurrentDictionary<Type, Dictionary<string, object>>(); // string representation to Enum value map

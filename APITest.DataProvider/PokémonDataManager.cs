@@ -33,10 +33,12 @@ namespace APITest.Services
                     var test = JsonConvert.DeserializeObject<List<DummyPokémon>>(respons.Content);
                     foreach (var pokémon in test)
                     {
-                        var newPokémon = new Pokémon();
-                        newPokémon.Name = pokémon.Name;
-                        newPokémon.Stats = pokémon.Stats;
-                        newPokémon.Type = new List<PokémonType>();
+                        var newPokémon = new Pokémon
+                        {
+                            Name = pokémon.Name,
+                            Stats = pokémon.Stats,
+                            Type = new List<PokémonType>()
+                        };
 
                         foreach (var item in pokémon.Type)
                         {
@@ -82,20 +84,6 @@ namespace APITest.Services
             }
 
             await _dbContext.SaveChangesAsync();
-        }
-
-
-        //________________________________________________________________________________________________________________________
-
-        public async Task<IEnumerable<Pokémon>> CreatePokédexAsync(List<Pokémon> pokédex) // !!
-        {
-            var pokédexJson = JsonConvert.SerializeObject(pokédex);
-            //RestRequest request = new RestRequest(pokédexJson, Method.POST);
-            //var respons = _repository.Execute(request);
-            ////_restClient.SaveChanges
-
-            List<Pokémon> selection = new List<Pokémon>(); // geen statuscode-controle?
-            return selection; // wat returnen?
         }
     }
 }

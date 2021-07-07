@@ -41,11 +41,5 @@ namespace FlowPilotsAPITest.Api.Controllers
         {
             return Ok(await _dataManager.GetSpecificTypesAsync(type));
         }
-
-        [HttpPost]
-        public async Task<ActionResult<Pokémon>> CreatePokédex([FromBody] List<Pokémon> pokédex)
-        {
-            return Ok(await _dataManager.CreatePokédexAsync(pokédex));
-        }
     }
 }
