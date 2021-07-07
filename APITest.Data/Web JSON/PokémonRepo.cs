@@ -18,11 +18,10 @@ namespace APITest.Data
         {
             _restClient = new RestClient(APIURL);
         }
-
-        public async Task<IRestResponse> GetAllPokémonAsync()
+        public async Task<IRestResponse> GetAllPokémonAsync() // ???
         {
             RestRequest request = new RestRequest(Method.GET);
-            var respons = await _restClient.ExecuteAsync(request);
+            var respons = _restClient.Execute(request);
             return respons;
         }
     }

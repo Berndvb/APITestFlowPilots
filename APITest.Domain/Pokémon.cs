@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -15,7 +13,11 @@ namespace APITest.Domain
         public Name Name { get; set; }
 
         [JsonProperty("type")]
+<<<<<<< HEAD
         public List<PokémonType> Type { get; set; }
+=======
+        public List<EPokémonType> Type { get; set; }
+>>>>>>> parent of a6f9865 (chris2)
 
         [JsonProperty("base")]
         public BaseStats Stats { get; set; }
