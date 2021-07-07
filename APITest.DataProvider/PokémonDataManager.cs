@@ -14,7 +14,6 @@ namespace APITest.Services
     {
         private readonly IPokémonRepo _repository;
         private readonly ApplicationDbContext _dbContext;
-        //private List<Pokémon> _allPokémon;
 
         public PokémonDataManager(IPokémonRepo repo, ApplicationDbContext dbContext)
         {
@@ -24,10 +23,10 @@ namespace APITest.Services
         public async Task<List<Pokémon>> GetAllPokémonAsync()
         {
             var allPokémon = new List<Pokémon>();
+
             if (_dbContext.Pokémons.Any() == false)
             {
                 var respons = await _repository.GetAllPokémonAsync();
-
                 if (respons.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     var PokémonJson = JsonConvert.DeserializeObject<List<DummyPokémon>>(respons.Content);
@@ -39,7 +38,6 @@ namespace APITest.Services
                             Stats = pokémon.Stats,
                             Type = new List<PokémonType>()
                         };
-
                         foreach (var item in pokémon.Type)
                         {
                             if (Enum.TryParse(item, out EPokémonType pType))
@@ -61,6 +59,7 @@ namespace APITest.Services
             {
                 allPokémon = await _dbContext.Pokémons.Include(x => x.Name).Include(x => x.Stats).Include(x => x.Type).ToListAsync();
             }
+
             return allPokémon;
         }
 
@@ -92,9 +91,7 @@ namespace APITest.Services
             {
                 await _dbContext.AddAsync(pokémon);
             }
-
             await _dbContext.SaveChangesAsync();
         }
-
     }
 }
